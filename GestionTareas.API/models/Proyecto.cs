@@ -1,0 +1,17 @@
+﻿using Microsoft.CodeAnalysis;
+
+namespace GestionTareas.API.models
+{
+    public class Proyecto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Descripcion { get; set; }
+        public int CreacionUserId { get; set; }
+        public bool IsActive { get; set; }
+        // Navigation properties
+        public Usuario? Creacion { get; set; }
+        public List<Tarea> Tareas { get; set; } = new();
+
+    }
+}
