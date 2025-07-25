@@ -1,0 +1,44 @@
+﻿@using GestionTareas.API.models
+@model IEnumerable<GestionTareas.API.models.Tareas>
+
+@{
+    ViewData["Title"] = "Reporte";
+}
+
+<h1>Reporte de Tareas</h1>
+<form asp-action="Reporte" method="get">
+    <div>
+        <label>Estado</label>
+        <select name="estado" asp-items="Html.GetEnumSelectList<TareaStatus>()">
+            <option value="">Todos</option>
+        </select>
+    </div>
+    <div>
+        <label>Prioridad</label>
+        <select name="prioridad" asp-items="Html.GetEnumSelectList<TareaPrioridad>()">
+            <option value="">Todos</option>
+        </select>
+    </div>
+    <button type="submit">Filtrar</button>
+</form>
+<table>
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Proyecto</th>
+            <th>Estado</th>
+            <th>Prioridad</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tarea in Model)
+        {
+            <tr>
+                <td>@tarea.Titulo</td>
+                <td>@tarea.Project?.Nombre</td>
+                <td>@tarea.Status</td>
+                <td>@tarea.Prioridad</td>
+            </tr>
+        }
+    </tbody>
+</table>

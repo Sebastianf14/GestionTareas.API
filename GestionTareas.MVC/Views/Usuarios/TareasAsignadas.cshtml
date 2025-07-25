@@ -1,0 +1,29 @@
+﻿@model IEnumerable<GestionTareas.API.models.Tareas>
+
+@{
+    ViewData["Title"] = "TareasAsignadas";
+}
+
+<h1>Tareas Asignadas</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Proyecto</th>
+            <th>Estado</th>
+            <th>Prioridad</th>
+            <th>Fecha Vencimiento</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tarea in Model)
+        {
+            <tr>
+                <td>@tarea.Titulo</td>
+                <td>@tarea.Project?.Nombre</td>
+                <td>@tarea.Status</td>
+                <td>@tarea.Prioridad</td>
+            </tr>
+        }
+    </tbody>
+</table>

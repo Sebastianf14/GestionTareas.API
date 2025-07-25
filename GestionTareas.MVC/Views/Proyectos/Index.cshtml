@@ -1,0 +1,29 @@
+﻿@model IEnumerable<GestionTareas.API.models.Proyectos>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Proyectos</h1>
+<a href="/Proyectos/Create">Crear Proyecto</a>
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Creador</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var proyecto in Model)
+        {
+            <tr>
+                <td>@proyecto.Nombre</td>
+                <td>@proyecto.Descripcion</td>
+                <td>@proyecto.Creacion?.Nombre</td>
+                <td><a href="/Proyectos/Details/@proyecto.Id">Ver Detalles</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

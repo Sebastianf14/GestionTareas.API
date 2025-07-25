@@ -1,0 +1,26 @@
+﻿@model IEnumerable<GestionTareas.API.models.Usuarios>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Usuarios</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var usuario in Model)
+        {
+            <tr>
+                <td>@usuario.Nombre</td>
+                <td>@usuario.Email</td>
+                <td><a href="/Usuarios/TareasAsignadas/@usuario.Id">Ver Tareas</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,31 @@
+﻿@model GestionTareas.API.models.Proyectos
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>@Model.Nombre</h1>
+<p>@Model.Descripcion</p>
+<h2>Tareas</h2>
+<a href="/Tareas/Create?proyectoId=@Model.Id">Crear Tarea</a>
+<table>
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Estado</th>
+            <th>Prioridad</th>
+            <th>Asignado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tarea in Model.Tareas.OrderBy(t => t.Prioridad).ThenBy(t => t.Titulo)) // Cambiado FechaVencimiento por Titulo
+        {
+            <tr>
+                <td>@tarea.Titulo</td>
+                <td>@tarea.Status</td>
+                <td>@tarea.Prioridad</td>
+                <td>@(tarea.Asignacion?.Nombre ?? "No asignado")</td>
+            </tr>
+        }
+    </tbody>
+</table>

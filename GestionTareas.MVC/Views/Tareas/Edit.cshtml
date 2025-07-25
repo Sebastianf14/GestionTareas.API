@@ -1,0 +1,40 @@
+﻿@using GestionTareas.API.models
+@model GestionTareas.API.models.Tareas
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Editar Tarea</h1>
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ProjectoId" />
+    <input type="hidden" asp-for="CreacionUserId" />
+    <div>
+        <label asp-for="Titulo">Título</label>
+        <input asp-for="Titulo" required />
+    </div>
+    <div>
+        <label asp-for="Descripcion">Descripción</label>
+        <textarea asp-for="Descripcion"></textarea>
+    </div>
+    <div>
+        <label asp-for="Status">Estado</label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<TareaStatus>()"></select>
+    </div>
+    <div>
+        <label asp-for="Prioridad">Prioridad</label>
+        <select asp-for="Prioridad" asp-items="Html.GetEnumSelectList<TareaPrioridad>()"></select>
+    </div>
+    <div>
+        <label asp-for="AsignacionUserId">Asignado</label>
+        <select asp-for="AsignacionUserId" asp-items="@ViewBag.Usuarios">
+            <option value="">No asignado</option>
+        </select>
+    </div>
+    <button type="submit">Actualizar</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

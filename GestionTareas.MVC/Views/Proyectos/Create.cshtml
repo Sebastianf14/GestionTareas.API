@@ -1,0 +1,22 @@
+﻿@model GestionTareas.API.models.Proyectos
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Crear Proyecto</h1>
+<form asp-action="Create" method="post">
+    <div>
+        <label asp-for="Nombre">Nombre</label>
+        <input asp-for="Nombre" required />
+    </div>
+    <div>
+        <label asp-for="Descripcion">Descripción</label>
+        <textarea asp-for="Descripcion"></textarea>
+    </div>
+    <button type="submit">Crear</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

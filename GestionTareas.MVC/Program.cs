@@ -20,7 +20,7 @@ namespace GestionTareas.MVC
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            // Configurar autenticación con cookies
+            // Configurar autenticación con cookies (opcional, Identity ya maneja cookies)
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -29,11 +29,13 @@ namespace GestionTareas.MVC
                     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 });
 
-            // Agregar servicios para MVC y HttpClient
+            // Agregar servicios para MVC, Razor Pages y HttpClient
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages(); // ¡Esta es la línea importante que faltaba!
+
             builder.Services.AddHttpClient("ApiClient", client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/"); // URL de la API
+                client.BaseAddress = new Uri("https://localhost:7255/"); // URL de la API
             });
 
             var app = builder.Build();
