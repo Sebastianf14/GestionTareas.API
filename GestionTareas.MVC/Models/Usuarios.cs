@@ -1,6 +1,6 @@
-﻿namespace GestionTareas.API.models
+﻿namespace GestionTareas.MVC.models
 {
-    public class Usuario
+    public class Usuarios
     {
         public int Id { get; set; }
         public string Email { get; set; }

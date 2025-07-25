@@ -20,7 +20,7 @@ namespace GestionTareas.API.Controllers
 
         // GET: api/proyectos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Proyecto>>> GetProyectos()
+        public async Task<ActionResult<IEnumerable<Proyectos>>> GetProyectos()
         {
             using var connection = new SqlConnection(_connectionString);
             const string sql = @"
@@ -28,8 +28,8 @@ namespace GestionTareas.API.Controllers
                 FROM Proyectos p
                 INNER JOIN Usuarios u ON p.CreacionUserId = u.Id";
 
-            var proyectoDict = new Dictionary<int, Proyecto>();
-            await connection.QueryAsync<Proyecto, Usuario, Proyecto>(
+            var proyectoDict = new Dictionary<int, Proyectos>();
+            await connection.QueryAsync<Proyectos, Usuarios, Proyectos>(
                 sql,
                 (proyecto, usuario) =>
                 {
@@ -37,7 +37,7 @@ namespace GestionTareas.API.Controllers
                     {
                         currentProyecto = proyecto;
                         currentProyecto.Creacion = usuario;
-                        currentProyecto.Tareas = new List<Tarea>();
+                        currentProyecto.Tareas = new List<Tareas>();
                         proyectoDict.Add(proyecto.Id, currentProyecto);
                     }
                     return currentProyecto;
@@ -49,7 +49,7 @@ namespace GestionTareas.API.Controllers
 
         // GET: api/proyectos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Proyecto>> GetProyecto(int id)
+        public async Task<ActionResult<Proyectos>> GetProyecto(int id)
         {
             using var connection = new SqlConnection(_connectionString);
             const string sql = @"
@@ -64,7 +64,7 @@ namespace GestionTareas.API.Controllers
             using var multi = await connection.QueryMultipleAsync(sql, new { Id = id });
 
             // Replace the problematic line with the following code:
-            var proyecto = await multi.ReadFirstOrDefaultAsync<Proyecto>();
+            var proyecto = await multi.ReadFirstOrDefaultAsync<Proyectos>();
 
             if (proyecto == null)
             {
@@ -72,7 +72,7 @@ namespace GestionTareas.API.Controllers
             }
 
             // Mapear Tareas desde el segundo conjunto de resultados
-            var tareas = await multi.ReadAsync<Tarea>();
+            var tareas = await multi.ReadAsync<Tareas>();
             proyecto.Tareas = tareas.ToList();
 
             return Ok(proyecto);
@@ -80,7 +80,7 @@ namespace GestionTareas.API.Controllers
 
         // POST: api/proyectos
         [HttpPost]
-        public async Task<ActionResult<Proyecto>> CreateProyecto(Proyecto proyecto)
+        public async Task<ActionResult<Proyectos>> CreateProyecto(Proyectos proyecto)
         {
             using var connection = new SqlConnection(_connectionString);
             const string sql = @"INSERT INTO Proyectos (Nombre, Descripcion, CreacionUserId, IsActive) 
@@ -92,7 +92,7 @@ namespace GestionTareas.API.Controllers
 
         // PUT: api/proyectos/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProyecto(int id, Proyecto proyecto)
+        public async Task<IActionResult> UpdateProyecto(int id, Proyectos proyecto)
         {
             if (id != proyecto.Id)
             {

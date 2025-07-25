@@ -1,8 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace GestionTareas.API.models
+namespace GestionTareas.MVC.models
 {
-    public class Proyecto
+    public class Proyectos
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
@@ -10,8 +10,8 @@ namespace GestionTareas.API.models
         public int CreacionUserId { get; set; }
         public bool IsActive { get; set; }
         // Navigation properties
-        public Usuario? Creacion { get; set; }
-        public List<Tarea> Tareas { get; set; } = new();
+        public Usuarios? Creacion { get; set; }
+        public List<Tareas> Tareas { get; set; } = new();
 
     }
 }

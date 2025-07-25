@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace GestionTareas.API.models
+namespace GestionTareas.MVC.models
 {
     public enum TareaStatus
     {
@@ -16,7 +16,7 @@ namespace GestionTareas.API.models
         alto = 2,
         Critico = 3
     }
-    public class Tarea
+    public class Tareas
     {
             public int Id { get; set; }
             public string Titulo { get; set; }
@@ -28,8 +28,8 @@ namespace GestionTareas.API.models
             public int CreacionUserId { get; set; }
 
             // Navigation properties
-            public Proyecto? Project { get; set; }
-            public Usuario? Asignacion { get; set; }
-            public Usuario? Creacion { get; set; }
+            public Proyectos? Project { get; set; }
+            public Usuarios? Asignacion { get; set; }
+            public Usuarios? Creacion { get; set; }
     }
 }

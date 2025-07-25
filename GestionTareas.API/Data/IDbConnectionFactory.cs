@@ -54,11 +54,11 @@ namespace GestionTareas.API.Data
     // 4. Repositorio de Usuarios
     public interface IUsuarioRepository
     {
-        Task<Usuario> GetByIdAsync(int id);
-        Task<IEnumerable<Usuario>> GetAllActiveAsync();
-        Task<Usuario> GetByEmailAsync(string email);
-        Task<int> CreateAsync(Usuario usuario);
-        Task UpdateAsync(Usuario usuario);
+        Task<Usuarios> GetByIdAsync(int id);
+        Task<IEnumerable<Usuarios>> GetAllActiveAsync();
+        Task<Usuarios> GetByEmailAsync(string email);
+        Task<int> CreateAsync(Usuarios usuario);
+        Task UpdateAsync(Usuarios usuario);
         Task DeactivateAsync(int id);
     }
 
@@ -66,17 +66,17 @@ namespace GestionTareas.API.Data
     {
         public UsuarioRepository(IDbConnectionFactory connectionFactory) : base(connectionFactory) { }
 
-        public async Task<Usuario> GetByIdAsync(int id)
+        public async Task<Usuarios> GetByIdAsync(int id)
         {
             const string sql = @"
             SELECT Id, Email, Nombre, IsActive 
             FROM Usuarios 
             WHERE Id = @Id AND IsActive = 1";
 
-            return await QuerySingleAsync<Usuario>(sql, new { Id = id });
+            return await QuerySingleAsync<Usuarios>(sql, new { Id = id });
         }
 
-        public async Task<IEnumerable<Usuario>> GetAllActiveAsync()
+        public async Task<IEnumerable<Usuarios>> GetAllActiveAsync()
         {
             const string sql = @"
             SELECT Id, Email, Nombre, IsActive 
@@ -84,20 +84,20 @@ namespace GestionTareas.API.Data
             WHERE IsActive = 1
             ORDER BY Nombre";
 
-            return await QueryAsync<Usuario>(sql);
+            return await QueryAsync<Usuarios>(sql);
         }
 
-        public async Task<Usuario> GetByEmailAsync(string email)
+        public async Task<Usuarios> GetByEmailAsync(string email)
         {
             const string sql = @"
             SELECT Id, Email, Nombre, IsActive 
             FROM Usuarios 
             WHERE Email = @Email AND IsActive = 1";
 
-            return await QuerySingleAsync<Usuario>(sql, new { Email = email });
+            return await QuerySingleAsync<Usuarios>(sql, new { Email = email });
         }
 
-        public async Task<int> CreateAsync(Usuario usuario)
+        public async Task<int> CreateAsync(Usuarios usuario)
         {
             const string sql = @"
             INSERT INTO Usuarios (Email, Nombre, IsActive)
@@ -107,7 +107,7 @@ namespace GestionTareas.API.Data
             return await QuerySingleAsync<int>(sql, usuario);
         }
 
-        public async Task UpdateAsync(Usuario usuario)
+        public async Task UpdateAsync(Usuarios usuario)
         {
             const string sql = @"
             UPDATE Usuarios 
@@ -127,12 +127,12 @@ namespace GestionTareas.API.Data
     // 5. Repositorio de Proyectos
     public interface IProyectoRepository
     {
-        Task<Proyecto> GetByIdAsync(int id);
-        Task<Proyecto> GetByIdWithTareasAsync(int id);
-        Task<IEnumerable<Proyecto>> GetAllActiveAsync();
-        Task<IEnumerable<Proyecto>> GetByCreadorAsync(int creadorId);
-        Task<int> CreateAsync(Proyecto proyecto);
-        Task UpdateAsync(Proyecto proyecto);
+        Task<Proyectos> GetByIdAsync(int id);
+        Task<Proyectos> GetByIdWithTareasAsync(int id);
+        Task<IEnumerable<Proyectos>> GetAllActiveAsync();
+        Task<IEnumerable<Proyectos>> GetByCreadorAsync(int creadorId);
+        Task<int> CreateAsync(Proyectos proyecto);
+        Task UpdateAsync(Proyectos proyecto);
         Task DeactivateAsync(int id);
     }
 
@@ -140,7 +140,7 @@ namespace GestionTareas.API.Data
     {
         public ProyectoRepository(IDbConnectionFactory connectionFactory) : base(connectionFactory) { }
 
-        public async Task<Proyecto> GetByIdAsync(int id)
+        public async Task<Proyectos> GetByIdAsync(int id)
         {
             const string sql = @"
             SELECT p.Id, p.Nombre, p.Descripcion, p.CreacionUserId, p.IsActive,
@@ -150,7 +150,7 @@ namespace GestionTareas.API.Data
             WHERE p.Id = @Id AND p.IsActive = 1";
 
             using var connection = _connectionFactory.CreateConnection();
-            var proyectos = await connection.QueryAsync<Proyecto, Usuario, Proyecto>(
+            var proyectos = await connection.QueryAsync<Proyectos, Usuarios, Proyectos>(
                 sql,
                 (proyecto, usuario) =>
                 {
@@ -164,7 +164,7 @@ namespace GestionTareas.API.Data
             return proyectos.FirstOrDefault();
         }
 
-        public async Task<Proyecto> GetByIdWithTareasAsync(int id)
+        public async Task<Proyectos> GetByIdWithTareasAsync(int id)
         {
             const string sql = @"
             SELECT p.Id, p.Nombre, p.Descripcion, p.CreacionUserId, p.IsActive,
@@ -181,9 +181,9 @@ namespace GestionTareas.API.Data
             WHERE p.Id = @Id AND p.IsActive = 1";
 
             using var connection = _connectionFactory.CreateConnection();
-            var proyectoDictionary = new Dictionary<int, Proyecto>();
+            var proyectoDictionary = new Dictionary<int, Proyectos>();
 
-            await connection.QueryAsync<Proyecto, Usuario, Tarea, Usuario, Usuario, Proyecto>(
+            await connection.QueryAsync<Proyectos, Usuarios, Tareas, Usuarios, Usuarios, Proyectos>(
                 sql,
                 (proyecto, creador, tarea, asignado, creadorTarea) =>
                 {
@@ -191,7 +191,7 @@ namespace GestionTareas.API.Data
                     {
                         proyectoEntry = proyecto;
                         proyectoEntry.Creacion = creador;
-                        proyectoEntry.Tareas = new List<Tarea>();
+                        proyectoEntry.Tareas = new List<Tareas>();
                         proyectoDictionary.Add(proyecto.Id, proyectoEntry);
                     }
 
@@ -211,7 +211,7 @@ namespace GestionTareas.API.Data
             return proyectoDictionary.Values.FirstOrDefault();
         }
 
-        public async Task<IEnumerable<Proyecto>> GetAllActiveAsync()
+        public async Task<IEnumerable<Proyectos>> GetAllActiveAsync()
         {
             const string sql = @"
             SELECT p.Id, p.Nombre, p.Descripcion, p.CreacionUserId, p.IsActive,
@@ -222,7 +222,7 @@ namespace GestionTareas.API.Data
             ORDER BY p.Nombre";
 
             using var connection = _connectionFactory.CreateConnection();
-            var proyectos = await connection.QueryAsync<Proyecto, Usuario, Proyecto>(
+            var proyectos = await connection.QueryAsync<Proyectos, Usuarios, Proyectos>(
                 sql,
                 (proyecto, usuario) =>
                 {
@@ -235,7 +235,7 @@ namespace GestionTareas.API.Data
             return proyectos;
         }
 
-        public async Task<IEnumerable<Proyecto>> GetByCreadorAsync(int creadorId)
+        public async Task<IEnumerable<Proyectos>> GetByCreadorAsync(int creadorId)
         {
             const string sql = @"
             SELECT p.Id, p.Nombre, p.Descripcion, p.CreacionUserId, p.IsActive,
@@ -246,7 +246,7 @@ namespace GestionTareas.API.Data
             ORDER BY p.Nombre";
 
             using var connection = _connectionFactory.CreateConnection();
-            var proyectos = await connection.QueryAsync<Proyecto, Usuario, Proyecto>(
+            var proyectos = await connection.QueryAsync<Proyectos, Usuarios, Proyectos>(
                 sql,
                 (proyecto, usuario) =>
                 {
@@ -260,7 +260,7 @@ namespace GestionTareas.API.Data
             return proyectos;
         }
 
-        public async Task<int> CreateAsync(Proyecto proyecto)
+        public async Task<int> CreateAsync(Proyectos proyecto)
         {
             const string sql = @"
             INSERT INTO Proyectos (Nombre, Descripcion, CreacionUserId, IsActive)
@@ -270,7 +270,7 @@ namespace GestionTareas.API.Data
             return await QuerySingleAsync<int>(sql, proyecto);
         }
 
-        public async Task UpdateAsync(Proyecto proyecto)
+        public async Task UpdateAsync(Proyectos proyecto)
         {
             const string sql = @"
             UPDATE Proyectos 
@@ -291,12 +291,12 @@ namespace GestionTareas.API.Data
     // 6. Repositorio de Tareas
     public interface ITareaRepository
     {
-        Task<Tarea> GetByIdAsync(int id);
-        Task<IEnumerable<Tarea>> GetByProjectoIdAsync(int proyectoId);
-        Task<IEnumerable<Tarea>> GetByAsignadoIdAsync(int usuarioId);
-        Task<IEnumerable<Tarea>> GetByStatusAsync(TareaStatus status);
-        Task<int> CreateAsync(Tarea tarea);
-        Task UpdateAsync(Tarea tarea);
+        Task<Tareas> GetByIdAsync(int id);
+        Task<IEnumerable<Tareas>> GetByProjectoIdAsync(int proyectoId);
+        Task<IEnumerable<Tareas>> GetByAsignadoIdAsync(int usuarioId);
+        Task<IEnumerable<Tareas>> GetByStatusAsync(TareaStatus status);
+        Task<int> CreateAsync(Tareas tarea);
+        Task UpdateAsync(Tareas tarea);
         Task DeleteAsync(int id);
     }
 
@@ -304,7 +304,7 @@ namespace GestionTareas.API.Data
     {
         public TareaRepository(IDbConnectionFactory connectionFactory) : base(connectionFactory) { }
 
-        public async Task<Tarea> GetByIdAsync(int id)
+        public async Task<Tareas> GetByIdAsync(int id)
         {
             const string sql = @"
             SELECT t.Id, t.Titulo, t.Descripcion, t.Status, t.Prioridad, 
@@ -319,7 +319,7 @@ namespace GestionTareas.API.Data
             WHERE t.Id = @Id";
 
             using var connection = _connectionFactory.CreateConnection();
-            var tareas = await connection.QueryAsync<Tarea, Proyecto, Usuario, Usuario, Tarea>(
+            var tareas = await connection.QueryAsync<Tareas, Proyectos, Usuarios, Usuarios, Tareas>(
                 sql,
                 (tarea, proyecto, asignado, creador) =>
                 {
@@ -335,7 +335,7 @@ namespace GestionTareas.API.Data
             return tareas.FirstOrDefault();
         }
 
-        public async Task<IEnumerable<Tarea>> GetByProjectoIdAsync(int proyectoId)
+        public async Task<IEnumerable<Tareas>> GetByProjectoIdAsync(int proyectoId)
         {
             const string sql = @"
             SELECT t.Id, t.Titulo, t.Descripcion, t.Status, t.Prioridad, 
@@ -349,7 +349,7 @@ namespace GestionTareas.API.Data
             ORDER BY t.Prioridad DESC, t.Id";
 
             using var connection = _connectionFactory.CreateConnection();
-            var tareas = await connection.QueryAsync<Tarea, Usuario, Usuario, Tarea>(
+            var tareas = await connection.QueryAsync<Tareas, Usuarios, Usuarios, Tareas>(
                 sql,
                 (tarea, asignado, creador) =>
                 {
@@ -364,7 +364,7 @@ namespace GestionTareas.API.Data
             return tareas;
         }
 
-        public async Task<IEnumerable<Tarea>> GetByAsignadoIdAsync(int usuarioId)
+        public async Task<IEnumerable<Tareas>> GetByAsignadoIdAsync(int usuarioId)
         {
             const string sql = @"
             SELECT t.Id, t.Titulo, t.Descripcion, t.Status, t.Prioridad, 
@@ -376,7 +376,7 @@ namespace GestionTareas.API.Data
             ORDER BY t.Prioridad DESC, t.Status, t.Id";
 
             using var connection = _connectionFactory.CreateConnection();
-            var tareas = await connection.QueryAsync<Tarea, Proyecto, Tarea>(
+            var tareas = await connection.QueryAsync<Tareas, Proyectos, Tareas>(
                 sql,
                 (tarea, proyecto) =>
                 {
@@ -390,7 +390,7 @@ namespace GestionTareas.API.Data
             return tareas;
         }
 
-        public async Task<IEnumerable<Tarea>> GetByStatusAsync(TareaStatus status)
+        public async Task<IEnumerable<Tareas>> GetByStatusAsync(TareaStatus status)
         {
             const string sql = @"
             SELECT t.Id, t.Titulo, t.Descripcion, t.Status, t.Prioridad, 
@@ -404,7 +404,7 @@ namespace GestionTareas.API.Data
             ORDER BY t.Prioridad DESC, t.Id";
 
             using var connection = _connectionFactory.CreateConnection();
-            var tareas = await connection.QueryAsync<Tarea, Proyecto, Usuario, Tarea>(
+            var tareas = await connection.QueryAsync<Tareas, Proyectos, Usuarios, Tareas>(
                 sql,
                 (tarea, proyecto, asignado) =>
                 {
@@ -419,7 +419,7 @@ namespace GestionTareas.API.Data
             return tareas;
         }
 
-        public async Task<int> CreateAsync(Tarea tarea)
+        public async Task<int> CreateAsync(Tareas tarea)
         {
             const string sql = @"
             INSERT INTO Tareas (Titulo, Descripcion, Status, Prioridad, 
@@ -440,7 +440,7 @@ namespace GestionTareas.API.Data
             });
         }
 
-        public async Task UpdateAsync(Tarea tarea)
+        public async Task UpdateAsync(Tareas tarea)
         {
             const string sql = @"
             UPDATE Tareas 

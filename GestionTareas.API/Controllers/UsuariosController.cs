@@ -20,19 +20,19 @@ namespace GestionTareas.API.Controllers
 
         // GET: api/usuarios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<Usuarios>>> GetUsuarios()
         {
             using var connection = new SqlConnection(_connectionString);
-            var usuarios = await connection.QueryAsync<Usuario>("SELECT * FROM Usuarios");
+            var usuarios = await connection.QueryAsync<Usuarios>("SELECT * FROM Usuarios");
             return Ok(usuarios);
         }
 
         // GET: api/usuarios/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Usuario>> GetUsuario(int id)
+        public async Task<ActionResult<Usuarios>> GetUsuario(int id)
         {
             using var connection = new SqlConnection(_connectionString);
-            var usuario = await connection.QueryFirstOrDefaultAsync<Usuario>("SELECT * FROM Usuarios WHERE Id = @Id", new { Id = id });
+            var usuario = await connection.QueryFirstOrDefaultAsync<Usuarios>("SELECT * FROM Usuarios WHERE Id = @Id", new { Id = id });
             if (usuario == null)
             {
                 return NotFound();
@@ -42,7 +42,7 @@ namespace GestionTareas.API.Controllers
 
         // POST: api/usuarios
         [HttpPost]
-        public async Task<ActionResult<Usuario>> CreateUsuario(Usuario usuario)
+        public async Task<ActionResult<Usuarios>> CreateUsuario(Usuarios usuario)
         {
             using var connection = new SqlConnection(_connectionString);
             const string sql = @"INSERT INTO Usuarios (Email, Nombre, IsActive) 
@@ -54,7 +54,7 @@ namespace GestionTareas.API.Controllers
 
         // PUT: api/usuarios/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUsuario(int id, Usuario usuario)
+        public async Task<IActionResult> UpdateUsuario(int id, Usuarios usuario)
         {
             if (id != usuario.Id)
             {

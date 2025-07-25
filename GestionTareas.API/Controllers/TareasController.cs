@@ -20,7 +20,7 @@ namespace GestionTareas.API.Controllers
 
         // GET: api/tareas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Tarea>>> GetTareas()
+        public async Task<ActionResult<IEnumerable<Tareas>>> GetTareas()
         {
             using var connection = new SqlConnection(_connectionString);
             const string sql = @"
@@ -30,8 +30,8 @@ namespace GestionTareas.API.Controllers
                 INNER JOIN Usuarios uc ON t.CreacionUserId = uc.Id
                 LEFT JOIN Usuarios ua ON t.AsignacionUserId = ua.Id";
 
-            var tareas = new List<Tarea>();
-            await connection.QueryAsync<Tarea, Proyecto, Usuario, Usuario, Tarea>(
+            var tareas = new List<Tareas>();
+            await connection.QueryAsync<Tareas, Proyectos, Usuarios, Usuarios, Tareas>(
                 sql,
                 (tarea, proyecto, creacion, asignacion) =>
                 {
@@ -48,7 +48,7 @@ namespace GestionTareas.API.Controllers
 
         // GET: api/tareas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Tarea>> GetTarea(int id)
+        public async Task<ActionResult<Tareas>> GetTarea(int id)
         {
             using var connection = new SqlConnection(_connectionString);
             const string sql = @"
@@ -59,8 +59,8 @@ namespace GestionTareas.API.Controllers
                 LEFT JOIN Usuarios ua ON t.AsignacionUserId = ua.Id
                 WHERE t.Id = @Id";
 
-            Tarea tarea = null;
-            await connection.QueryAsync<Tarea, Proyecto, Usuario, Usuario, Tarea>(
+            Tareas tarea = null;
+            await connection.QueryAsync<Tareas, Proyectos, Usuarios, Usuarios, Tareas>(
                 sql,
                 (t, p, uc, ua) =>
                 {
@@ -83,7 +83,7 @@ namespace GestionTareas.API.Controllers
 
         // POST: api/tareas
         [HttpPost]
-        public async Task<ActionResult<Tarea>> CreateTarea(Tarea tarea)
+        public async Task<ActionResult<Tareas>> CreateTarea(Tareas tarea)
         {
             using var connection = new SqlConnection(_connectionString);
             const string sql = @"INSERT INTO Tareas (Titulo, Descripcion, Status, Prioridad, ProjectoId, AsignacionUserId, CreacionUserId) 
@@ -95,7 +95,7 @@ namespace GestionTareas.API.Controllers
 
         // PUT: api/tareas/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTarea(int id, Tarea tarea)
+        public async Task<IActionResult> UpdateTarea(int id, Tareas tarea)
         {
             if (id != tarea.Id)
             {
