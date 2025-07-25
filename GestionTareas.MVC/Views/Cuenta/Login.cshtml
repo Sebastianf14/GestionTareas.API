@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+<h2>Login</h2>
+
+<form method="post">
+    <input name="email" placeholder="Email" />
+    <input name="password" placeholder="Contraseña" type="password" />
+    <button type="submit">Iniciar Sesión</button>
+</form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div style="color:red">@ViewData.ModelState.Values.First().Errors.First().ErrorMessage</div>
+}

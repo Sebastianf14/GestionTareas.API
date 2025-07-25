@@ -11,36 +11,28 @@ namespace GestionTareas.MVC
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Configurar el contexto de Identity
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection")));
-
-            // Configurar Identity
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-
-            // Configurar autenticación con cookies (opcional, Identity ya maneja cookies)
+            // Configurar autenticación con cookies personalizada (sin Identity)
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "/Identity/Account/Login";
-                    options.LogoutPath = "/Identity/Account/Logout";
-                    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                    options.LoginPath = "/Cuenta/Login"; // Tu ruta personalizada
+                    options.LogoutPath = "/Cuenta/Logout";
+                    options.AccessDeniedPath = "/Cuenta/AccessDenied";
                 });
 
-            // Agregar servicios para MVC, Razor Pages y HttpClient
-            builder.Services.AddControllersWithViews();
-            builder.Services.AddRazorPages(); // ¡Esta es la línea importante que faltaba!
+            builder.Services.AddAuthorization();
 
+            // MVC y Razor
+            builder.Services.AddControllersWithViews();
+
+            // Cliente HTTP para consumir la API
             builder.Services.AddHttpClient("ApiClient", client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7255/"); // URL de la API
+                client.BaseAddress = new Uri("https://localhost:7255/"); // URL de tu API
             });
 
             var app = builder.Build();
 
-            // Configurar el pipeline
             if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -49,12 +41,13 @@ namespace GestionTareas.MVC
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
-            app.UseAuthentication();
+
+            app.UseAuthentication(); // Importante para cookies
             app.UseAuthorization();
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.MapRazorPages(); // Para Identity Pages
 
             app.Run();
         }
